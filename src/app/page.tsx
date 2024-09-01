@@ -1,10 +1,9 @@
-import { authConfig } from "@/libs/auth.config";
+import { getServerAuthSession } from "@/libs/auth";
 import { Box, Link, Typography } from "@mui/material";
-import { getServerSession } from "next-auth";
 import NextLink from "next/link";
 
 export default async () => {
-  const session = await getServerSession(authConfig);
+  const session = await getServerAuthSession();
   return (
     <Box>
       <Box

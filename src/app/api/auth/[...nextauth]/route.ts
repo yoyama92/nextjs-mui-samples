@@ -1,4 +1,4 @@
-import { authConfig } from "@/libs/auth.config";
+import { authConfig } from "@/libs/auth";
 import NextAuth from "next-auth";
 import type { NextRequest } from "next/server";
 

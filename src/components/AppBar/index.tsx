@@ -1,18 +1,20 @@
 "use client";
 
 import { usePopover } from "@/hooks/usePopover";
+import { trpc } from "@/trpc/client";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import NotificationsIcon from "@mui/icons-material/Notifications";
+import { Divider, List, ListItem, ListItemText, Popover } from "@mui/material";
 import AppBar from "@mui/material/AppBar";
 import Avatar from "@mui/material/Avatar";
 import Badge from "@mui/material/Badge";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
-import Menu from "@mui/material/Menu";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import type { Session } from "next-auth";
 import Image from "next/image";
+import { Fragment, useEffect, useState } from "react";
 import { useMemo } from "react";
 
 export const PrimaryAppBar = ({
@@ -20,7 +22,8 @@ export const PrimaryAppBar = ({
 }: {
   user: Session["user"];
 }) => {
-  const userPopover = usePopover<HTMLButtonElement>();
+  const userMenu = usePopover<HTMLButtonElement>();
+  const useNotifications = usePopover<HTMLButtonElement>();
 
   const menuId = "primary-search-account-menu";
   const renderMenu = useMemo(
@@ -47,6 +50,50 @@ export const PrimaryAppBar = ({
     [user],
   );
 
+  const [notifications, setNotifications] = useState<
+    {
+      id: number;
+      title: string;
+      text: string;
+    }[]
+  >([]);
+
+  useEffect(() => {
+    trpc.notification.findList.query().then((result) => {
+      setNotifications(result);
+    });
+  }, []);
+
+  const notificationMenu = useMemo(() => {
+    return (
+      <List
+        sx={{
+          width: "100%",
+          maxWidth: 360,
+          backgroundColor: "background.paper",
+        }}
+      >
+        {notifications.map(({ id, title, text }, index) => {
+          return (
+            <Fragment key={id}>
+              {index !== 0 && <Divider />}
+              <ListItem
+                alignItems="flex-start"
+                sx={{
+                  ":hover": {
+                    backgroundColor: "grey.100",
+                  },
+                }}
+              >
+                <ListItemText primary={title} secondary={text} />
+              </ListItem>
+            </Fragment>
+          );
+        })}
+      </List>
+    );
+  }, [...notifications, notifications.map]);
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
@@ -65,8 +112,10 @@ export const PrimaryAppBar = ({
               size="large"
               aria-label="show 17 new notifications"
               color="inherit"
+              onClick={useNotifications.handleOpen}
+              ref={useNotifications.anchorRef}
             >
-              <Badge badgeContent={17} color="error">
+              <Badge badgeContent={notifications.length} color="error">
                 <NotificationsIcon />
               </Badge>
             </IconButton>
@@ -75,8 +124,8 @@ export const PrimaryAppBar = ({
               aria-label="account of current user"
               aria-controls={menuId}
               aria-haspopup="true"
-              onClick={userPopover.handleOpen}
-              ref={userPopover.anchorRef}
+              onClick={userMenu.handleOpen}
+              ref={userMenu.anchorRef}
             >
               {user.image ? (
                 <Avatar alt="account image" src={user.image} />
@@ -87,23 +136,37 @@ export const PrimaryAppBar = ({
           </Box>
         </Toolbar>
       </AppBar>
-      <Menu
-        anchorEl={userPopover.anchorRef.current}
+      <Popover
+        anchorEl={userMenu.anchorRef.current}
         anchorOrigin={{
           vertical: "bottom",
           horizontal: "right",
         }}
         id={menuId}
-        keepMounted={true}
         transformOrigin={{
           vertical: "top",
           horizontal: "right",
         }}
-        open={userPopover.open}
-        onClose={userPopover.handleClose}
+        open={userMenu.open}
+        onClose={userMenu.handleClose}
       >
         {renderMenu}
-      </Menu>
+      </Popover>
+      <Popover
+        open={useNotifications.open}
+        anchorEl={useNotifications.anchorRef.current}
+        onClose={useNotifications.handleClose}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "right",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+      >
+        {notificationMenu}
+      </Popover>
     </Box>
   );
 };

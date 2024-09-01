@@ -1,4 +1,11 @@
-import type { Account, AuthOptions, Profile, Session, User } from "next-auth";
+import {
+  getServerSession,
+  type Account,
+  type AuthOptions,
+  type Profile,
+  type Session,
+  type User,
+} from "next-auth";
 import type { AdapterUser } from "next-auth/adapters";
 import type { JWT } from "next-auth/jwt";
 import GoogleProvider from "next-auth/providers/google";
@@ -122,3 +129,5 @@ export const authConfig: AuthOptions = {
     },
   },
 };
+
+export const getServerAuthSession = () => getServerSession(authConfig);
