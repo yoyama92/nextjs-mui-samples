@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import type { ReactNode } from "react";
+import { ZodErrorProvider } from "@/providers/zodProvider";
+import { NextAuthProvider } from "@/providers/nextAuthProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,9 +19,14 @@ export default ({
   children: ReactNode;
 }>) => {
   return (
-    <html lang="en">
+    <html lang="ja">
       <body className={inter.className}>
-        <AppRouterCacheProvider>{children}</AppRouterCacheProvider>
+        <AppRouterCacheProvider>
+          <NextAuthProvider>
+            <ZodErrorProvider />
+            {children}
+          </NextAuthProvider>
+        </AppRouterCacheProvider>
       </body>
     </html>
   );
