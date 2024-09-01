@@ -10,8 +10,19 @@ export const appRouter = createTrpcRouter({
     }),
 
   read: protectedProcedure
-    .input(z.number())
+    .input(
+      z.object({
+        id: z.number(),
+        read: z.boolean(),
+      }),
+    )
+    .output(
+      z.object({
+        notificationId: z.number(),
+        read: z.boolean(),
+      }),
+    )
     .mutation(async ({ ctx: { db, user }, input }) => {
-      return await readNotification(db)(input, user.id);
+      return await readNotification(db)(input.id, user.id, input.read);
     }),
 });

@@ -1,9 +1,10 @@
-import type { PrismClient } from "@/server/infrastructures/client";
+import type { PrismaClient } from "@/server/infrastructures/client";
 
-export const findList = (prisma: PrismClient) => {
+export const findList = (prisma: PrismaClient) => {
   return async (userId: number) => {
     const result = await prisma.notificationTarget.findMany({
       select: {
+        id: true,
         read: true,
         notification: {
           select: {
@@ -26,6 +27,7 @@ export const findList = (prisma: PrismClient) => {
     return result.map(({ notification, ...value }) => {
       return {
         id: notification.id,
+        targetId: value.id,
         title: notification.title,
         content: notification.content,
         read: value.read,
@@ -34,14 +36,14 @@ export const findList = (prisma: PrismClient) => {
   };
 };
 
-export const readNotification = (prisma: PrismClient) => {
-  return async (notificationId: number, userId: number) => {
-    return await prisma.notificationTarget.updateMany({
+export const readNotification = (prisma: PrismaClient) => {
+  return async (id: number, userId: number, value: boolean) => {
+    return await prisma.notificationTarget.update({
       data: {
-        read: true,
+        read: value,
       },
       where: {
-        notificationId: notificationId,
+        id: id,
         userId: userId,
       },
     });

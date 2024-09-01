@@ -4,15 +4,7 @@ import { usePopover } from "@/hooks/usePopover";
 import { trpc } from "@/trpc/client";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-import {
-  Checkbox,
-  Divider,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  Popover,
-} from "@mui/material";
+import { Divider, List, Popover } from "@mui/material";
 import AppBar from "@mui/material/AppBar";
 import Avatar from "@mui/material/Avatar";
 import Badge from "@mui/material/Badge";
@@ -23,6 +15,8 @@ import Typography from "@mui/material/Typography";
 import type { Session } from "next-auth";
 import Image from "next/image";
 import { Fragment, useEffect, useState } from "react";
+
+import { NotificationListItem } from "./notificationListItem";
 
 export const PrimaryAppBar = ({
   user,
@@ -37,6 +31,7 @@ export const PrimaryAppBar = ({
   const [notifications, setNotifications] = useState<
     {
       id: number;
+      targetId: number;
       title: string;
       content: string;
       read: boolean;
@@ -141,6 +136,13 @@ export const PrimaryAppBar = ({
           horizontal: "right",
         }}
       >
+        <Box
+          sx={{
+            padding: 2,
+          }}
+        >
+          <Typography variant="h6">Notifications</Typography>
+        </Box>
         {notifications.length > 0 ? (
           <List
             sx={{
@@ -149,35 +151,11 @@ export const PrimaryAppBar = ({
               backgroundColor: "background.paper",
             }}
           >
-            {notifications.map(({ id, title, content, read }, index) => {
+            {notifications.map(({ id, ...notification }, index) => {
               return (
                 <Fragment key={id}>
                   {index !== 0 && <Divider />}
-                  <ListItem
-                    alignItems="flex-start"
-                    sx={{
-                      ":hover": {
-                        backgroundColor: "grey.100",
-                      },
-                      alignItems: "center",
-                    }}
-                  >
-                    <ListItemIcon
-                      onClick={() => {
-                        if (!read) {
-                          trpc.notification.read.mutate(id);
-                        }
-                      }}
-                    >
-                      <Checkbox
-                        checked={read}
-                        tabIndex={-1}
-                        disableRipple={true}
-                        inputProps={{ "aria-labelledby": title }}
-                      />
-                    </ListItemIcon>
-                    <ListItemText primary={title} secondary={content} />
-                  </ListItem>
+                  <NotificationListItem {...notification} />
                 </Fragment>
               );
             })}
