@@ -15,6 +15,13 @@ model User {
   email  String  @unique
   name   String?
   tokens Token[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  NotificationTarget NotificationTarget[]
+
+  @@map("users")
 }
 
 model Token {
@@ -25,5 +32,41 @@ model Token {
   expiresAt    Int?    @map("expires_at")
 
   user   User @relation(fields: [userId], references: [id])
-  userId Int
+  userId Int  @map("user_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("tokens")
+}
+
+model Notification {
+  id Int @id @default(autoincrement())
+
+  title   String
+  content String
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  notificationTargets NotificationTarget[]
+
+  @@map("notifications")
+}
+
+model NotificationTarget {
+  id Int @id @default(autoincrement())
+
+  user   User @relation(fields: [userId], references: [id])
+  userId Int  @map("user_id")
+
+  read Boolean @default(false)
+
+  notification   Notification @relation(fields: [notificationId], references: [id])
+  notificationId Int          @map("notification_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("notification_targets")
 }

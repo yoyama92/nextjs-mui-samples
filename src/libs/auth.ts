@@ -2,7 +2,6 @@ import {
   getServerSession,
   type Account,
   type AuthOptions,
-  type Profile,
   type Session,
   type User,
 } from "next-auth";

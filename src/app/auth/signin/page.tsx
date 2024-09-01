@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 const handleSignIn = (provider?: string) => {
   signIn(provider, {
     redirect: false,
-    callbackUrl: "/auth/profile",
+    callbackUrl: "/",
   }).catch((error: unknown) => {
     console.error(error);
   });

@@ -4,7 +4,15 @@ import { usePopover } from "@/hooks/usePopover";
 import { trpc } from "@/trpc/client";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-import { Divider, List, ListItem, ListItemText, Popover } from "@mui/material";
+import {
+  Checkbox,
+  Divider,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Popover,
+} from "@mui/material";
 import AppBar from "@mui/material/AppBar";
 import Avatar from "@mui/material/Avatar";
 import Badge from "@mui/material/Badge";
@@ -15,7 +23,6 @@ import Typography from "@mui/material/Typography";
 import type { Session } from "next-auth";
 import Image from "next/image";
 import { Fragment, useEffect, useState } from "react";
-import { useMemo } from "react";
 
 export const PrimaryAppBar = ({
   user,
@@ -26,35 +33,13 @@ export const PrimaryAppBar = ({
   const useNotifications = usePopover<HTMLButtonElement>();
 
   const menuId = "primary-search-account-menu";
-  const renderMenu = useMemo(
-    () => (
-      <Box
-        sx={{
-          padding: 1,
-        }}
-      >
-        {user.image && (
-          <Image src={user.image} alt="account image" width={42} height={42} />
-        )}
-        <Typography variant="body1" component="div">
-          名前：{user.name}
-        </Typography>
-        <Typography variant="body1" component="div">
-          メールアドレス：{user.email}
-        </Typography>
-        <Typography variant="body1" component="div">
-          ロール：{user.role}
-        </Typography>
-      </Box>
-    ),
-    [user],
-  );
 
   const [notifications, setNotifications] = useState<
     {
       id: number;
       title: string;
-      text: string;
+      content: string;
+      read: boolean;
     }[]
   >([]);
 
@@ -64,50 +49,19 @@ export const PrimaryAppBar = ({
     });
   }, []);
 
-  const notificationMenu = useMemo(() => {
-    return (
-      <List
-        sx={{
-          width: "100%",
-          maxWidth: 360,
-          backgroundColor: "background.paper",
-        }}
-      >
-        {notifications.map(({ id, title, text }, index) => {
-          return (
-            <Fragment key={id}>
-              {index !== 0 && <Divider />}
-              <ListItem
-                alignItems="flex-start"
-                sx={{
-                  ":hover": {
-                    backgroundColor: "grey.100",
-                  },
-                }}
-              >
-                <ListItemText primary={title} secondary={text} />
-              </ListItem>
-            </Fragment>
-          );
-        })}
-      </List>
-    );
-  }, [...notifications, notifications.map]);
-
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
-        <Toolbar>
-          <Typography
-            variant="h6"
-            noWrap={true}
-            component="div"
-            sx={{ display: { xs: "none", sm: "block" } }}
-          >
+      <AppBar position="fixed">
+        <Toolbar
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+          }}
+        >
+          <Typography variant="h6" noWrap={true} component="div">
             MUI
           </Typography>
-          <Box sx={{ flexGrow: 1 }} />
-          <Box sx={{ display: { xs: "none", md: "flex" } }}>
+          <Box>
             <IconButton
               size="large"
               aria-label="show 17 new notifications"
@@ -150,7 +104,29 @@ export const PrimaryAppBar = ({
         open={userMenu.open}
         onClose={userMenu.handleClose}
       >
-        {renderMenu}
+        <Box
+          sx={{
+            padding: 1,
+          }}
+        >
+          {user.image && (
+            <Image
+              src={user.image}
+              alt="account image"
+              width={42}
+              height={42}
+            />
+          )}
+          <Typography variant="body1" component="div">
+            名前：{user.name}
+          </Typography>
+          <Typography variant="body1" component="div">
+            メールアドレス：{user.email}
+          </Typography>
+          <Typography variant="body1" component="div">
+            ロール：{user.role}
+          </Typography>
+        </Box>
       </Popover>
       <Popover
         open={useNotifications.open}
@@ -165,7 +141,56 @@ export const PrimaryAppBar = ({
           horizontal: "right",
         }}
       >
-        {notificationMenu}
+        {notifications.length > 0 ? (
+          <List
+            sx={{
+              width: "100%",
+              maxWidth: 360,
+              backgroundColor: "background.paper",
+            }}
+          >
+            {notifications.map(({ id, title, content, read }, index) => {
+              return (
+                <Fragment key={id}>
+                  {index !== 0 && <Divider />}
+                  <ListItem
+                    alignItems="flex-start"
+                    sx={{
+                      ":hover": {
+                        backgroundColor: "grey.100",
+                      },
+                      alignItems: "center",
+                    }}
+                  >
+                    <ListItemIcon
+                      onClick={() => {
+                        if (!read) {
+                          trpc.notification.read.mutate(id);
+                        }
+                      }}
+                    >
+                      <Checkbox
+                        checked={read}
+                        tabIndex={-1}
+                        disableRipple={true}
+                        inputProps={{ "aria-labelledby": title }}
+                      />
+                    </ListItemIcon>
+                    <ListItemText primary={title} secondary={content} />
+                  </ListItem>
+                </Fragment>
+              );
+            })}
+          </List>
+        ) : (
+          <Box
+            sx={{
+              padding: 1,
+            }}
+          >
+            通知がありません。
+          </Box>
+        )}
       </Popover>
     </Box>
   );

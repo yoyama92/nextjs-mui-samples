@@ -1,7 +1,7 @@
 import { appRouter as notificationRouter } from "@/server/api/routers/notification";
-import { createCallerFactory, createTRPCRouter } from "@/server/api/trpc";
+import { createCallerFactory, createTrpcRouter } from "@/server/api/trpc";
 
-export const appRouter = createTRPCRouter({
+export const appRouter = createTrpcRouter({
   notification: notificationRouter,
 });
 
