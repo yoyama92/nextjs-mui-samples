@@ -20,6 +20,7 @@ export default async () => {
           {
             path: "/auth/signin",
             name: "サインイン",
+            signIn: false,
           },
           {
             path: "/auth/profile",
@@ -31,10 +32,18 @@ export default async () => {
             name: "App Bar",
             signIn: true,
           },
+          {
+            path: "/admin/notifications",
+            name: "通知一覧",
+            signIn: true,
+          },
         ]
           .filter((v) => {
             if (v.signIn) {
               return session?.user !== undefined;
+            }
+            if (v.signIn === false) {
+              return session?.user === undefined;
             }
             return true;
           })
