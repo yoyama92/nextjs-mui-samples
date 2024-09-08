@@ -1,3 +1,6 @@
+import "server-only";
+
+import { prisma } from "@/server/infrastructures/client";
 import {
   getServerSession,
   type Account,
@@ -8,7 +11,6 @@ import {
 import type { AdapterUser } from "next-auth/adapters";
 import type { JWT } from "next-auth/jwt";
 import GoogleProvider from "next-auth/providers/google";
-import { prisma } from "./prisma";
 
 const CustomGoogleProvider = ({
   id,

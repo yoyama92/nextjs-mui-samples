@@ -1,4 +1,4 @@
-import type { PrismaClient } from "@/server/infrastructures/client";
+import type { PrismaClient } from "@prisma/client";
 
 export const findAll = (prisma: PrismaClient) => {
   return async () => {

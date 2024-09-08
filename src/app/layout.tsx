@@ -1,10 +1,12 @@
+import { theme } from "@/libs/theme";
+import { NextAuthProvider } from "@/providers/nextAuthProvider";
+import { ZodErrorProvider } from "@/providers/zodProvider";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v14-appRouter";
+import { ThemeProvider } from "@mui/material/styles";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import "./globals.css";
 import type { ReactNode } from "react";
-import { ZodErrorProvider } from "@/providers/zodProvider";
-import { NextAuthProvider } from "@/providers/nextAuthProvider";
+import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,10 +24,12 @@ export default ({
     <html lang="ja">
       <body className={inter.className}>
         <AppRouterCacheProvider>
-          <NextAuthProvider>
-            <ZodErrorProvider />
-            {children}
-          </NextAuthProvider>
+          <ThemeProvider theme={theme}>
+            <NextAuthProvider>
+              <ZodErrorProvider />
+              {children}
+            </NextAuthProvider>
+          </ThemeProvider>
         </AppRouterCacheProvider>
       </body>
     </html>

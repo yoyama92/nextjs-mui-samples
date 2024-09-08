@@ -37,6 +37,14 @@ export default async () => {
             name: "通知一覧",
             signIn: true,
           },
+          {
+            path: "/markdown",
+            name: "マークダウン",
+          },
+          {
+            path: "/articles",
+            name: "microCMSで入稿したブログ",
+          },
         ]
           .filter((v) => {
             if (v.signIn) {

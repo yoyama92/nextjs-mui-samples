@@ -1,11 +1,9 @@
 import { Box } from "@mui/material";
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { NotificationTable } from "@/components/NotificationTable";
 import { getServerAuthSession } from "@/libs/auth";
-import { prisma } from "@/libs/prisma";
-import { createCaller } from "@/server/api/root";
+import { getCaller } from "@/libs/trpc";
 
 export default async () => {
   const session = await getServerAuthSession();
@@ -17,12 +15,7 @@ export default async () => {
     redirect("/");
   }
 
-  const caller = createCaller({
-    headers: headers(),
-    session: session,
-    db: prisma,
-  });
-
+  const caller = await getCaller();
   const notifications = await caller.notification.findAll();
   return (
     <Box>

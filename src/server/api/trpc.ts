@@ -3,15 +3,15 @@ import { ZodError } from "zod";
 
 import { getServerAuthSession } from "@/libs/auth";
 import { prisma } from "@/server/infrastructures/client";
-import { findUserByEmail } from "../services/user";
+import { findUserByEmail } from "@/server/services/user";
 
 export const createTrpcContext = async (opts: { headers: Headers }) => {
   const session = (await getServerAuthSession()) ?? undefined;
   const db = prisma;
 
   return {
-    session,
-    db,
+    session: session,
+    db: db,
     ...opts,
   };
 };

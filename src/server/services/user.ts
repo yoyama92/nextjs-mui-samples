@@ -1,4 +1,4 @@
-import type { PrismaClient } from "@/server/infrastructures/client";
+import type { PrismaClient } from "@prisma/client";
 
 export const findUserByEmail = (prisma: PrismaClient) => {
   return async (email: string) => {
