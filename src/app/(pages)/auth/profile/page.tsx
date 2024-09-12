@@ -1,15 +1,9 @@
+import { authWarper } from "@/providers/authWarper";
 import { Box, Card, CardContent, CardMedia, Typography } from "@mui/material";
+import type { Session } from "next-auth";
 import Image from "next/image";
 
-import { getServerAuthSession } from "@/libs/auth";
-import { redirect } from "next/navigation";
-
-export default async () => {
-  const session = await getServerAuthSession();
-  if (session?.user === undefined) {
-    redirect("/auth/signin");
-  }
-  const user = session.user;
+export default authWarper((user: Session["user"]) => {
   return (
     <Box>
       <Card sx={{ maxWidth: 345 }}>
@@ -37,4 +31,4 @@ export default async () => {
       </Card>
     </Box>
   );
-};
+});

@@ -11,14 +11,9 @@ import type { ReactNode } from "react";
 export default ({ children }: { children: ReactNode }) => {
   const pathname = usePathname();
   const session = useSession();
+
   return (
-    <Box
-      component="main"
-      sx={{
-        padding: "6rem",
-        minHeight: "100vh",
-      }}
-    >
+    <Box>
       {children}
       <Stack spacing={1} direction="row">
         {pathname !== "/" && (

@@ -7,6 +7,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import type { ReactNode } from "react";
 import "./globals.css";
+import { Box } from "@mui/material";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -27,7 +28,15 @@ export default ({
           <ThemeProvider theme={theme}>
             <NextAuthProvider>
               <ZodErrorProvider />
-              {children}
+              <Box
+                component="main"
+                sx={{
+                  padding: "6rem",
+                  minHeight: "100vh",
+                }}
+              >
+                {children}
+              </Box>
             </NextAuthProvider>
           </ThemeProvider>
         </AppRouterCacheProvider>

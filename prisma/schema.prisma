@@ -19,7 +19,8 @@ model User {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  NotificationTarget NotificationTarget[]
+  NotificationTarget  NotificationTarget[]
+  BlogBrowsingHistory BlogBrowsingHistory[]
 
   @@map("users")
 }
@@ -70,4 +71,17 @@ model NotificationTarget {
 
   @@unique(fields: [userId, notificationId], name: "notificationTargetIdentifier")
   @@map("notification_targets")
+}
+
+model BlogBrowsingHistory {
+  id Int @id @default(autoincrement())
+
+  contentId String @map("content_id")
+
+  user   User @relation(fields: [userId], references: [id])
+  userId Int  @map("user_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("blog_browsing_histories")
 }

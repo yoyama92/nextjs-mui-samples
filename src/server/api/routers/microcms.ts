@@ -1,11 +1,12 @@
 import { z } from "zod";
 
-import { createTrpcRouter, publicProcedure } from "@/server/api/trpc";
+import { createTrpcRouter, protectedProcedure } from "@/server/api/trpc";
 import { getDetail, getList } from "@/server/services/microcms";
 import { TRPCError } from "@trpc/server";
+import { addBrowsingHistory } from "@/server/services/blogService";
 
 export const appRouter = createTrpcRouter({
-  getList: publicProcedure
+  getList: protectedProcedure
     .input(
       z
         .object({
@@ -22,7 +23,7 @@ export const appRouter = createTrpcRouter({
         throw new TRPCError({ code: "NOT_FOUND" });
       }
     }),
-  getDetail: publicProcedure
+  getDetail: protectedProcedure
     .input(
       z.object({
         contentId: z.string(),
@@ -35,5 +36,11 @@ export const appRouter = createTrpcRouter({
       } catch {
         throw new TRPCError({ code: "NOT_FOUND" });
       }
+    }),
+  addBrowsingHistory: protectedProcedure
+    .input(z.object({ contentId: z.string() }))
+    .output(z.void())
+    .mutation(async ({ ctx: { db, user }, input: { contentId } }) => {
+      await addBrowsingHistory(db)(user.id, contentId);
     }),
 });
