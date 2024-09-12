@@ -4,7 +4,7 @@ import type { Session } from "next-auth";
 import { getServerAuthSession } from "@/libs/auth";
 import { notFound } from "next/navigation";
 
-export const authWarper = async (
+export const withAuthentication = async (
   children: (user: Session["user"]) => JSX.Element | Promise<JSX.Element>,
 ) => {
   const session = await getServerAuthSession();

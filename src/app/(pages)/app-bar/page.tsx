@@ -2,9 +2,9 @@ import { Box } from "@mui/material";
 
 import { PrimaryAppBar } from "@/components/AppBar";
 import type { Session } from "next-auth";
-import { authWarper } from "@/providers/authWarper";
+import { withAuthentication } from "@/providers/withAuthentication";
 
-export default authWarper((user: Session["user"]) => {
+export default withAuthentication((user: Session["user"]) => {
   return (
     <Box>
       <PrimaryAppBar user={user} />
