@@ -3,7 +3,7 @@ import { Box, Card, CardContent, CardMedia, Typography } from "@mui/material";
 import type { Session } from "next-auth";
 import Image from "next/image";
 
-export default withAuthentication((user: Session["user"]) => {
+export default await withAuthentication((user: Session["user"]) => {
   return (
     <Box>
       <Card sx={{ maxWidth: 345 }}>
