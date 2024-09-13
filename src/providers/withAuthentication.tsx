@@ -11,7 +11,7 @@ export const withAuthentication = async (
 
   // 認証はmiddlewareに設定するので、userが未設定の場合はない想定
   if (session?.user === undefined) {
-    notFound();
+    return () => notFound();
   }
-  return <>{children(session.user)}</>;
+  return () => children(session.user);
 };
