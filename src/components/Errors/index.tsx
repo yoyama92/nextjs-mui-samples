@@ -3,9 +3,9 @@ import HomeIcon from "@mui/icons-material/Home";
 import { Button, Container, Paper, Typography } from "@mui/material";
 import { StatusCodes, getReasonPhrase } from "http-status-codes";
 
-export const Errors = ({ status }: { status: string }) => {
+export const Errors = ({ status }: { status: number }) => {
   if (!(status in messages)) {
-    return <Errors status={StatusCodes.BAD_REQUEST.toString()} />;
+    return <Errors status={StatusCodes.BAD_REQUEST} />;
   }
 
   const statusCode = messages[status];

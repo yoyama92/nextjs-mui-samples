@@ -2,7 +2,7 @@ import { StatusCodes } from "http-status-codes";
 import type { ReactNode } from "react";
 
 export const messages: Record<
-  string,
+  number,
   {
     message: string;
     action?: {

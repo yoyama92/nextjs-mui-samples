@@ -21,5 +21,5 @@ export default ({ params, searchParams }: Props) => {
   if (searchParams.key !== process.env.ERROR_SECRET) {
     notFound();
   }
-  return <Errors status={params.slug} />;
+  return <Errors status={Number.parseInt(params.slug)} />;
 };

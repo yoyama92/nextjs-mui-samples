@@ -1,10 +1,10 @@
+import { errorPath } from "@/libs/navigation";
 import { StatusCodes } from "http-status-codes";
 import {
   type NextMiddlewareWithAuth,
   type NextRequestWithAuth,
   withAuth,
 } from "next-auth/middleware";
-
 import { type NextFetchEvent, NextResponse } from "next/server";
 
 const rewriteToErrorPage = (
@@ -12,12 +12,7 @@ const rewriteToErrorPage = (
   request: NextRequestWithAuth,
 ) => {
   return NextResponse.rewrite(
-    new URL(
-      `/errors/${statusCode}?${new URLSearchParams({
-        key: process.env.ERROR_SECRET ?? "",
-      }).toString()}`,
-      request.nextUrl.origin,
-    ),
+    new URL(errorPath(statusCode), request.nextUrl.origin),
   );
 };
 
