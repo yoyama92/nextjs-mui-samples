@@ -33,21 +33,51 @@ export const createCallerFactory = t.createCallerFactory;
 
 export const createTrpcRouter = t.router;
 
-export const publicProcedure = t.procedure;
+export const loggedProcedure = t.procedure.use(async (opts) => {
+  const start = Date.now();
 
-export const protectedProcedure = t.procedure.use(async ({ ctx, next }) => {
-  if (!ctx.session?.user.email) {
+  const result = await opts.next();
+
+  const durationMs = Date.now() - start;
+  const meta = { path: opts.path, type: opts.type, durationMs };
+
+  if (result.ok) {
+    console.log("OK request timing:", meta);
+  } else {
+    console.error("Non-OK request timing", meta);
+  }
+
+  return result;
+});
+
+export const publicProcedure = loggedProcedure;
+
+export const onlyCallerProcedure = publicProcedure.use(({ ctx, next }) => {
+  const secret = ctx.headers.get("x-trpc-secret");
+  if (secret !== process.env.TRPC_SECRET) {
+    throw new TRPCError({ code: "UNAUTHORIZED" });
+  }
+  return next();
+});
+
+export const protectedProcedure = publicProcedure.use(async ({ ctx, next }) => {
+  const session = ctx.session;
+  if (!session?.user.email) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
 
-  const user = await findUserByEmail(ctx.db)(ctx.session.user.email);
+  const user = await findUserByEmail(ctx.db)(session.user.email);
   if (!user) {
+    throw new TRPCError({ code: "UNAUTHORIZED" });
+  }
+
+  if (!user.refreshToken) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
 
   return next({
     ctx: {
-      session: { ...ctx.session, user: ctx.session.user },
+      session: session,
       user: user,
     },
   });

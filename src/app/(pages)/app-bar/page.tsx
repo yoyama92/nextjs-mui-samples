@@ -1,13 +1,13 @@
-import { Box } from "@mui/material";
-
 import { PrimaryAppBar } from "@/components/AppBar";
-import type { Session } from "next-auth";
-import { withAuthentication } from "@/providers/withAuthentication";
+import { Errors } from "@/components/Errors";
+import { getServerAuthSession } from "@/libs/auth";
+import { StatusCodes } from "http-status-codes";
 
-export default await withAuthentication((user: Session["user"]) => {
-  return (
-    <Box>
-      <PrimaryAppBar user={user} />
-    </Box>
-  );
-});
+export default async () => {
+  const session = await getServerAuthSession();
+
+  if (!session?.user) {
+    return <Errors status={StatusCodes.UNAUTHORIZED} />;
+  }
+  return <PrimaryAppBar user={session.user} />;
+};

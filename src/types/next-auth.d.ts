@@ -9,25 +9,28 @@ declare module "next-auth" {
     role: "user" | "admin";
   }
 
-  interface JWT extends DefaultJWT {
-    /**
-     * user role
-     */
-    role: "user" | "admin";
-  }
-
   interface Session extends DefaultSession {
     user: DefaultSession["user"] & {
       role: "user" | "admin";
+      accessToken: {
+        token: string;
+        expiresAt: number;
+      };
     };
   }
 }
 
 declare module "next-auth/jwt" {
+  // biome-ignore lint/style/useNamingConvention: <explanation>
   interface JWT extends DefaultJWT {
     /**
      * user role
      */
     role: "user" | "admin";
+
+    accessToken: {
+      token: string;
+      expiresAt: number;
+    };
   }
 }

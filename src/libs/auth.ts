@@ -1,6 +1,5 @@
 import "server-only";
 
-import { prisma } from "@/server/infrastructures/client";
 import {
   getServerSession,
   type Account,
@@ -11,6 +10,7 @@ import {
 import type { AdapterUser } from "next-auth/adapters";
 import type { JWT } from "next-auth/jwt";
 import GoogleProvider from "next-auth/providers/google";
+import { getCaller } from "@/libs/trpc";
 
 const CustomGoogleProvider = ({
   id,
@@ -49,16 +49,48 @@ const CustomGoogleProvider = ({
   });
 };
 
-const jwt = ({
+const jwt = async ({
   token,
   user,
-}: { token: JWT; user: User | AdapterUser }): JWT => {
-  if (user) {
+  account,
+}: {
+  token: JWT;
+  user: User | AdapterUser;
+  account: Account | null;
+}): Promise<JWT> => {
+  if (user && account) {
     return {
       ...token,
-      user: user,
       role: user.role,
+      accessToken: token.accessToken || {
+        token: account.access_token,
+        expiresAt: account.expires_at,
+      },
     };
+  }
+
+  const expiresAt = token.accessToken.expiresAt;
+  if (expiresAt < Date.now() / 1000) {
+    // sessionを設定しないとsessionの取得処理でこの関数が呼ばれるので無限ループになる。
+    // 無限ループを避けるためにsessionと同等の内容を設定する。
+    const caller = await getCaller({
+      session: {
+        user: {
+          ...token,
+        },
+        expires: new Date(Date.now() + 60).toISOString(),
+      },
+    });
+    const accessToken = await caller.user.refreshAccessToken();
+    if (accessToken) {
+      return {
+        ...token,
+        accessToken: {
+          token: accessToken.accessToken,
+          expiresAt: accessToken.expiresAt,
+        },
+      };
+    }
   }
   return token;
 };
@@ -69,8 +101,38 @@ const session = ({ session, token }: { session: Session; token: JWT }) => {
     user: {
       ...session.user,
       role: token.role,
+      token: token.token,
+      accessToken: token.accessToken,
     },
   };
+};
+
+const signIn = async ({
+  user,
+  account,
+}: {
+  user: User;
+  account: Account | null;
+}) => {
+  if (!user.email) {
+    return false;
+  }
+  try {
+    const caller = await getCaller();
+    await caller.user.saveAuthenticatedUser({
+      user: {
+        email: user.email,
+        name: user.name,
+        role: user.role,
+      },
+      account: {
+        refreshToken: account?.refresh_token,
+      },
+    });
+    return true;
+  } catch {
+    return false;
+  }
 };
 
 export const authConfig: AuthOptions = {
@@ -91,42 +153,14 @@ export const authConfig: AuthOptions = {
   callbacks: {
     jwt: jwt,
     session: session,
+    signIn: signIn,
   },
   events: {
-    signIn: async ({
-      user,
-      account,
-    }: {
-      user: User;
-      account: Account | null;
-    }) => {
-      await prisma.$transaction(async (prisma) => {
-        if (user.email) {
-          const { id } = await prisma.user.upsert({
-            where: {
-              email: user.email,
-            },
-            update: {
-              name: user.name,
-            },
-            create: {
-              email: user.email,
-              name: user.name,
-            },
-          });
-
-          if (account?.access_token || account?.refresh_token) {
-            await prisma.token.create({
-              data: {
-                userId: id,
-                accessToken: account.access_token,
-                refreshToken: account.refresh_token,
-                expiresAt: account.expires_at,
-              },
-            });
-          }
-        }
+    signOut: async ({ session }: { session: Session }) => {
+      const caller = await getCaller({
+        session: session,
       });
+      await caller.user.signOut();
     },
   },
 };

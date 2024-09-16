@@ -1,9 +1,16 @@
-import { withAuthentication } from "@/providers/withAuthentication";
+import { Errors } from "@/components/Errors";
+import { getServerAuthSession } from "@/libs/auth";
 import { Box, Card, CardContent, CardMedia, Typography } from "@mui/material";
-import type { Session } from "next-auth";
+import { StatusCodes } from "http-status-codes";
 import Image from "next/image";
 
-export default await withAuthentication((user: Session["user"]) => {
+export default async () => {
+  const session = await getServerAuthSession();
+
+  if (!session?.user) {
+    return <Errors status={StatusCodes.UNAUTHORIZED} />;
+  }
+  const user = session.user;
   return (
     <Box>
       <Card sx={{ maxWidth: 345 }}>
@@ -31,4 +38,4 @@ export default await withAuthentication((user: Session["user"]) => {
       </Card>
     </Box>
   );
-});
+};
