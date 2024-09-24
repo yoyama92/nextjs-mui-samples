@@ -16,6 +16,8 @@
     "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "3.654.0",
+    "@aws-sdk/s3-request-presigner": "3.654.0",
     "@emotion/styled": "11.13.0",
     "@hookform/resolvers": "3.9.0",
     "@lexical/html": "0.17.1",
