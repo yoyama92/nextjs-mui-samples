@@ -4,8 +4,8 @@ import {
   protectedProcedure,
 } from "@/server/api/trpc";
 import {
-  saveAuthenticatedUser,
   refreshAccessToken,
+  saveAuthenticatedUser,
 } from "@/server/services/user";
 import { z } from "zod";
 

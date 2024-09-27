@@ -1,6 +1,6 @@
 import type { PrismaClient } from "@prisma/client";
-import type { Session } from "next-auth";
 import { google } from "googleapis";
+import type { Session } from "next-auth";
 
 export const findUserByEmail = (prisma: PrismaClient) => {
   return async (email: string) => {

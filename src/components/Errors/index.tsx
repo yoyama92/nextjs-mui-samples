@@ -74,7 +74,7 @@ export const Errors = ({ status }: { status: number }) => {
           startIcon={statusCode.action?.icon ?? <HomeIcon />}
           href={
             statusCode.action?.onClick === undefined
-              ? statusCode.action?.href ?? "/"
+              ? (statusCode.action?.href ?? "/")
               : undefined
           }
           onClick={statusCode.action?.onClick}

@@ -1,9 +1,10 @@
+// biome-ignore lint/correctness/noUndeclaredDependencies: <explanation>
 import "server-only";
 
-import { getTRPCErrorFromUnknown } from "@trpc/server";
 import { Errors } from "@/components/Errors";
-import { StatusCodes } from "http-status-codes";
+import { getTRPCErrorFromUnknown } from "@trpc/server";
 import type { TRPC_ERROR_CODE_KEY } from "@trpc/server/rpc";
+import { StatusCodes } from "http-status-codes";
 
 const errors: Record<TRPC_ERROR_CODE_KEY, StatusCodes> = {
   UNAUTHORIZED: StatusCodes.UNAUTHORIZED,

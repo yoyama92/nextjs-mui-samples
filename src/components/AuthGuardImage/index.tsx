@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { trpc } from "@/trpc/client";
 import { Box, Skeleton } from "@mui/material";
+import { useEffect, useState } from "react";
 
 export const AuthGuardImage = ({
   src,

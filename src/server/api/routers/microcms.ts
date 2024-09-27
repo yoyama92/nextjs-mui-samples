@@ -1,9 +1,9 @@
 import { z } from "zod";
 
 import { createTrpcRouter, protectedProcedure } from "@/server/api/trpc";
+import { addBrowsingHistory } from "@/server/services/blogService";
 import { getDetail, getList } from "@/server/services/microcms";
 import { TRPCError } from "@trpc/server";
-import { addBrowsingHistory } from "@/server/services/blogService";
 
 export const appRouter = createTrpcRouter({
   getList: protectedProcedure

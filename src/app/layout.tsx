@@ -23,7 +23,7 @@ export default ({
 }>) => {
   return (
     <html lang="ja">
-      <body className={inter.className}>
+      <body class={inter.className}>
         <AppRouterCacheProvider>
           <ThemeProvider theme={theme}>
             <NextAuthProvider>

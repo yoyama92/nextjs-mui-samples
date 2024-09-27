@@ -1,16 +1,16 @@
 import "server-only";
 
+import { getCaller } from "@/libs/trpc";
 import {
-  getServerSession,
   type Account,
   type AuthOptions,
   type Session,
   type User,
+  getServerSession,
 } from "next-auth";
 import type { AdapterUser } from "next-auth/adapters";
 import type { JWT } from "next-auth/jwt";
 import GoogleProvider from "next-auth/providers/google";
-import { getCaller } from "@/libs/trpc";
 
 const CustomGoogleProvider = ({
   id,

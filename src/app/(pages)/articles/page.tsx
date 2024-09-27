@@ -1,8 +1,8 @@
-import { LIMIT } from "@/constants";
-import { Pagination } from "@/components/article/Pagination";
 import { ArticleList } from "@/components/article/ArticleList";
-import { Box, Paper } from "@mui/material";
+import { Pagination } from "@/components/article/Pagination";
+import { LIMIT } from "@/constants";
 import { getCaller } from "@/libs/trpc";
+import { Box, Paper } from "@mui/material";
 
 export const revalidate = 60;
 

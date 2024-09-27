@@ -1,6 +1,6 @@
-import NextLink from "next/link";
 import type { Tag } from "@/types/microcms";
 import { Chip } from "@mui/material";
+import NextLink from "next/link";
 
 type Props = {
   tag: Tag;

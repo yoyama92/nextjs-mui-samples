@@ -9,16 +9,16 @@ const SupportedBlockType = {
 } as const;
 type BlockType = keyof typeof SupportedBlockType;
 
-import { useCallback, useEffect, useState } from "react";
-import { Button, Stack } from "@mui/material";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import {
   $createHeadingNode,
   $isHeadingNode,
   type HeadingTagType,
 } from "@lexical/rich-text";
-import { $getSelection, $isRangeSelection } from "lexical";
 import { $setBlocksType } from "@lexical/selection";
+import { Button, Stack } from "@mui/material";
+import { $getSelection, $isRangeSelection } from "lexical";
+import { useCallback, useEffect, useState } from "react";
 
 const BlockTypeButton = ({
   blockType,
@@ -69,30 +69,32 @@ export const ToolbarPlugin = () => {
   );
 
   useEffect(() => {
+    const readState = () => {
+      const selection = $getSelection();
+      if (!$isRangeSelection(selection)) {
+        return;
+      }
+
+      const anchorNode = selection.anchor.getNode();
+      const targetNode =
+        anchorNode.getKey() === "root"
+          ? anchorNode
+          : anchorNode.getTopLevelElementOrThrow();
+
+      if ($isHeadingNode(targetNode)) {
+        const tag = targetNode.getTag();
+        return setBlockType(tag);
+      }
+
+      const nodeType = targetNode.getType();
+      if (nodeType in SupportedBlockType) {
+        return setBlockType(nodeType as BlockType);
+      }
+      return setBlockType("paragraph");
+    };
+
     return editor.registerUpdateListener(({ editorState }) => {
-      editorState.read(() => {
-        const selection = $getSelection();
-        if (!$isRangeSelection(selection)) {
-          return;
-        }
-
-        const anchorNode = selection.anchor.getNode();
-        const targetNode =
-          anchorNode.getKey() === "root"
-            ? anchorNode
-            : anchorNode.getTopLevelElementOrThrow();
-
-        if ($isHeadingNode(targetNode)) {
-          const tag = targetNode.getTag();
-          return setBlockType(tag);
-        }
-
-        const nodeType = targetNode.getType();
-        if (nodeType in SupportedBlockType) {
-          return setBlockType(nodeType as BlockType);
-        }
-        return setBlockType("paragraph");
-      });
+      editorState.read(readState);
     });
   }, [editor]);
 

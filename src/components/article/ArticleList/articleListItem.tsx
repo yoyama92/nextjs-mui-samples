@@ -1,8 +1,8 @@
 import type { Article } from "@/types/microcms";
+import { Box, Link } from "@mui/material";
 import Image from "next/image";
 import { PublishedDate } from "../Date";
 import { TagList } from "../TagList";
-import { Box, Link } from "@mui/material";
 
 export const ArticleListItem = ({
   article,

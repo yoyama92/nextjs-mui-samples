@@ -1,10 +1,10 @@
 "use client";
 
+import AddIcon from "@mui/icons-material/Add";
 import { Button, Stack } from "@mui/material";
 import Box from "@mui/material/Box";
 import { DataGrid, type GridColDef, useGridApiRef } from "@mui/x-data-grid";
 import { addMinutes, format } from "date-fns";
-import AddIcon from "@mui/icons-material/Add";
 
 const columns: GridColDef<Notification>[] = [
   { field: "id", headerName: "ID", width: 90 },

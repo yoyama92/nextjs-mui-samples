@@ -1,7 +1,7 @@
 import { Box, ScopedCssBaseline, Typography } from "@mui/material";
+import Script from "next/script";
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
-import Script from "next/script";
 
 export const RichTextViewer = ({ children }: { children: string }) => {
   return (

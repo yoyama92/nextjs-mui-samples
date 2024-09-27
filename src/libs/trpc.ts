@@ -1,8 +1,8 @@
 import "server-only";
 
+import { getServerAuthSession } from "@/libs/auth";
 import { createCaller } from "@/server/api/root";
 import { prisma } from "@/server/infrastructures/client";
-import { getServerAuthSession } from "./auth";
 import type { Session } from "next-auth";
 
 type Props = {

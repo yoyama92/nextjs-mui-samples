@@ -13,8 +13,11 @@ import {
 } from "@mui/material";
 import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
-import { useForm, useWatch, type SubmitHandler } from "react-hook-form";
+import { type SubmitHandler, useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
+
+/** 改行コードの正規表現 */
+const newLineCode = /\r\n|\n|\r/;
 
 const inputSchema = z.object({
   file: z
@@ -77,7 +80,7 @@ export default () => {
         try {
           const result = reader.result;
           if (typeof result === "string") {
-            const list = result.trim().split(/\r\n|\n|\r/);
+            const list = result.trim().split(newLineCode);
             setValue(
               "file",
               { values: list },

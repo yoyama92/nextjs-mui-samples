@@ -2,7 +2,7 @@
 
 import { downloadFile } from "@/libs/file";
 import { Box, CircularProgress, Link } from "@mui/material";
-import { useState, type ReactNode } from "react";
+import { type ReactNode, useState } from "react";
 
 /**
  * ファイルをダウンロードするボタン
@@ -33,8 +33,8 @@ export const DownloadButton = ({
         onClick={() => {
           setLoading(true);
           downloadFile(href)
-            .catch((error) => {
-              console.error(error);
+            .catch(() => {
+              window.alert("ダウンロードに失敗しました。");
             })
             .finally(() => {
               setLoading(false);

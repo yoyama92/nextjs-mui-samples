@@ -1,4 +1,4 @@
-import { z, type ZodIssueOptionalMessage } from "zod";
+import { type ZodIssueOptionalMessage, z } from "zod";
 
 const getErrorMessage = (issue: ZodIssueOptionalMessage) => {
   switch (issue.code) {
@@ -10,16 +10,23 @@ const getErrorMessage = (issue: ZodIssueOptionalMessage) => {
         case "string": {
           return `最小文字数(${issue.minimum}文字)を満たしていません。`;
         }
+        default: {
+          return issue.message;
+        }
       }
-      break;
     }
     case z.ZodIssueCode.too_big: {
       switch (issue.type) {
         case "string": {
           return `最大文字数(${issue.maximum}文字)を満たしていません。`;
         }
+        default: {
+          return issue.message;
+        }
       }
-      break;
+    }
+    default: {
+      return issue.message;
     }
   }
 };
